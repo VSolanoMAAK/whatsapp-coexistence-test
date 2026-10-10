@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Coexistence</title>
+</head>
+
+<body>
+  <h2>WhatsApp Business Coexistence</h2>
+
+  <button onclick="launchWhatsAppSignup()">
+    Conectar WhatsApp Business
+  </button>
+
+  <pre id="result"></pre>
+
+  <script>
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: "2235033823488543",
+        autoLogAppEvents: true,
+        xfbml: true,
+        version: "v26.0"
+      });
+    };
+
+    window.addEventListener("message", (event) => {
+      if (!event.origin.endsWith("facebook.com")) return;
+
+      try {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "WA_EMBEDDED_SIGNUP") {
+          console.log(data);
+          document.getElementById("result").textContent =
+            JSON.stringify(data, null, 2);
+        }
+      } catch (e) {
+        console.log(event.data);
+      }
+    });
+
+    function fbLoginCallback(response) {
+      if (response.authResponse) {
+        console.log("CODE:", response.authResponse.code);
+      } else {
+        console.log(response);
+      }
+    }
+
+    function launchWhatsAppSignup() {
+      FB.login(fbLoginCallback, {
+        config_id: "1109656994769534",
+        response_type: "code",
+        override_default_response_type: true,
+        extras: {
+          setup: {},
+          featureType: "whatsapp_business_app_onboarding",
+          sessionInfoVersion: "3"
+        }
+      });
+    }
+  </script>
+
+  <script
+    async
+    defer
+    crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js">
+  </script>
+</body>
+</html>
